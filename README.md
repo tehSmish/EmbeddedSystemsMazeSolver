@@ -1,13 +1,18 @@
 # EmbeddedSystemsMazeSolver
 # A sample of code for my 3rd year Embedded Systems Module, Code runs on a lego mindstorm allowing it to solve a maze and remove dead ends
+# fixed formatting
 
+sensor configuration
+```
 #pragma config(Sensor, S1, Gyro, sensorEV3_Gyro, modeEV3Gyro_RateAndAngle)
 #pragma config(Sensor, S2,     Colour,         sensorEV3_Color, modeEV3Color_Reflected)
 #pragma config(Sensor, S4,     Touch,          sensorEV3_Touch)
 #pragma config(Sensor, S3,     IRDistance1,    sensorEV3_IRSensor, modeEV3IR_Proximity)
 #pragma config(Motor,  motorA,          motorLeft,     tmotorEV3_Large, PIDControl, encoder)
 #pragma config(Motor,  motorD,          motorRight,    tmotorEV3_Large, PIDControl, encoder)
-
+```
+initalising variables with inital values
+```
 int currentDistance = 0;
 int currentLight = 0;
 int turn = 80;
@@ -19,33 +24,44 @@ int pos = 0;
 bool deadEnd = false;
 int depth = 3;
 string currentPos;
+```
+task 1 distance reading (IR camera to wall)
+```
 task distanceReading() {
 	while (true) {
 		currentDistance = SensorValue[IRDistance1];
 		//displayCenteredBigTextLine(4, "Dist: %d", currentDistance);
 	}
 }
-
+```
+task 2 light reading (looking at floor colour to find maze end)
+```
 task lightReading() {
 	while (true) {
 		currentLight = SensorValue[Colour];
 		//displayCenteredBigTextLine(8, "Light: %d", currentLight);
 	}
 }
-
+```
+task 3 list pos (check the list of turns)
+```
 task listPos() {
 	while (true) {
 		currentPos = route[pos];
 		displayCenteredBigTextLine(4,"List: %s", currentPos);
 	}
 }
-
+```
+function 1 deadend check (check for deadends)
+```
 void deadEndCheck (){
 	if((route[pos]=="R")&&(route[pos-1]=="R")){
 		deadEnd = true;
 	}
 }
-
+```
+function 2 eliminate route (mark a path as being a dead end)
+```
 void eliminateRoute (){
 	if(route[pos]!=route[pos-depth]){
 		depth += 2;
@@ -61,7 +77,9 @@ void eliminateRoute (){
 		deadEnd = false;
 	}
 }
-
+```
+function 3 turn right (turn 90' clockwise)
+```
 void turnRight(){
 		resetGyro(Gyro);
 		while(SensorValue[Gyro] < turn){
@@ -78,18 +96,25 @@ void turnRight(){
 		}
 		pos++;
 }
+```
+function 4 forward (move forward)
+```
 void forward(){
 		motor[motorLeft] = 20;
 		motor[motorRight] = 20;
 		displayCenteredBigTextLine(2, "Moving foward");
 }
-
+```
+function 5 halt (stops the robot)
+```
 void halt(){
 		motor[motorLeft] = 0;
 		motor[motorRight] = 0;
 		displayCenteredBigTextLine(2, "halted");
 }
-
+```
+function 6 turn left (turn 90' counter clockwise)
+```
 void turnLeft(){
 		wait1Msec(100);
 		resetGyro(Gyro);
@@ -107,7 +132,9 @@ void turnLeft(){
 		}
 		pos++;
 }
-
+```
+main branch
+```
 task main()
 {
 	startTask(distanceReading);
@@ -171,3 +198,5 @@ task main()
 		}
 	}
 }
+
+```
